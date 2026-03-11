@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CrossFit 4 Semanas">
+<meta name="theme-color" content="#080c0f">
+<title>CrossFit 4 Semanas · Full Body</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
+<style>
+:root{
+  --bg:#080c0f;--surface:#0e1318;--card:#111820;--border:#1e2830;--border2:#263040;
+  --white:#eef2f5;--muted:#4a6070;--muted2:#6a8090;
+  --w1:#00c8a0;--w2:#e85c2a;--w3:#4a9eff;--w4:#c060e0;--gold:#f0b840;
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,0)}
+
+/* HERO */
+.hero{padding:calc(20px + var(--safe-top)) 20px 28px;background:linear-gradient(160deg,#0d1820 0%,#080c0f 100%);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'CF';position:absolute;right:-10px;top:-20px;font-size:180px;font-weight:900;color:rgba(0,200,160,0.04);line-height:1;pointer-events:none;letter-spacing:-10px}
+.hero-tag{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--w1);border:1px solid rgba(0,200,160,0.3);padding:3px 10px;display:inline-block;margin-bottom:14px}
+.hero h1{font-size:clamp(36px,9vw,72px);font-weight:900;line-height:.9;letter-spacing:-1px;text-transform:uppercase}
+.hero h1 span{color:var(--w1)}
+.hero-sub{margin-top:12px;font-size:12px;color:var(--muted2);line-height:1.7;max-width:480px}
+.hero-stats{display:flex;gap:0;margin-top:20px;border:1px solid var(--border2)}
+.stat{flex:1;padding:10px 8px;border-right:1px solid var(--border2);text-align:center}
+.stat:last-child{border-right:none}
+.stat-v{font-size:22px;font-weight:900;color:var(--gold);line-height:1}
+.stat-l{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:2px}
+
+/* WEEK NAV */
+.week-nav{display:flex;position:sticky;top:0;z-index:100;background:rgba(8,12,15,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding-top:env(safe-area-inset-top,0)}
+.wnav-btn{flex:1;padding:13px 6px;background:none;border:none;border-right:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;position:relative;transition:color .2s}
+.wnav-btn:last-child{border-right:none}
+.wnav-btn .wn-num{display:block;font-size:15px;font-weight:900;line-height:1;margin-bottom:2px}
+.wnav-btn .wn-lbl{display:block;font-size:8px;letter-spacing:2px;opacity:.7}
+.wnav-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:transparent;transition:background .2s}
+.wnav-btn[data-w="1"].active,.wnav-btn[data-w="1"]:hover{color:var(--w1)}
+.wnav-btn[data-w="2"].active,.wnav-btn[data-w="2"]:hover{color:var(--w2)}
+.wnav-btn[data-w="3"].active,.wnav-btn[data-w="3"]:hover{color:var(--w3)}
+.wnav-btn[data-w="4"].active,.wnav-btn[data-w="4"]:hover{color:var(--w4)}
+.wnav-btn[data-w="1"].active::after{background:var(--w1)}
+.wnav-btn[data-w="2"].active::after{background:var(--w2)}
+.wnav-btn[data-w="3"].active::after{background:var(--w3)}
+.wnav-btn[data-w="4"].active::after{background:var(--w4)}
+
+/* WEEK PANELS */
+.week-panel{display:none;padding:16px 14px 40px}
+.week-panel.active{display:block}
+
+.week-banner{border-left:4px solid;padding:14px 16px;margin-bottom:16px;position:relative;overflow:hidden}
+.week-banner::before{content:attr(data-num);position:absolute;right:10px;top:-10px;font-size:100px;font-weight:900;opacity:.06;line-height:1}
+.wb-label{font-size:9px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:6px}
+.wb-title{font-size:18px;font-weight:900;text-transform:uppercase;line-height:1.1;margin-bottom:4px}
+.wb-desc{font-size:11px;color:var(--muted2);line-height:1.5}
+
+/* DAY CARDS */
+.day-card{border:1px solid var(--border);margin-bottom:10px;background:var(--card);overflow:hidden}
+.day-card.rest-card{opacity:.65}
+.day-toggle{display:flex;align-items:center;gap:0;cursor:pointer;width:100%;-webkit-user-select:none;user-select:none}
+.day-num-box{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:56px;padding:14px 10px;border-right:1px solid var(--border)}
+.dday{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.dnum{font-size:22px;font-weight:900;line-height:1.1}
+.day-info{flex:1;padding:12px 12px}
+.day-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;line-height:1.2}
+.day-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.dtag{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:2px 7px;background:rgba(255,255,255,.04);border:1px solid var(--border2);color:var(--muted2)}
+.day-right{padding:12px 12px 12px 0;display:flex;align-items:center;gap:8px}
+.time-tag{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);border:1px solid rgba(240,184,64,.25);padding:3px 8px;white-space:nowrap}
+.chevron{font-size:12px;color:var(--muted);transition:transform .25s;flex-shrink:0}
+.day-card.open .chevron{transform:rotate(180deg)}
+
+/* DAY BODY */
+.day-body{display:none;border-top:1px solid var(--border)}
+.day-card.open .day-body{display:block}
+
+/* SECTIONS */
+.sec{padding:14px 14px 0}
+.sec:last-child{padding-bottom:14px}
+.sec-title{font-size:9px;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.sec-title.warm{color:#5cc8c0}
+.sec-title.strength{color:var(--gold)}
+.sec-title.wod{color:var(--w2)}
+.sec-title.cool{color:var(--muted2)}
+
+/* WARM/COOL BULLETS */
+.bullets{list-style:none;display:flex;flex-direction:column;gap:4px}
+.bullets li{font-size:12px;color:#8a9eb0;padding-left:14px;position:relative;line-height:1.5}
+.bullets li::before{content:'·';position:absolute;left:0;color:var(--muted)}
+
+/* STRENGTH TABLE */
+.str-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.str-table{width:100%;border-collapse:collapse;min-width:280px}
+.str-table th{text-align:left;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding:0 6px 7px 0;border-bottom:1px solid var(--border);font-weight:400}
+.str-table td{padding:8px 6px 8px 0;border-bottom:1px solid rgba(30,40,48,.6);vertical-align:top;font-size:12px}
+.str-table td:first-child{font-weight:600;color:var(--white);width:46%}
+.str-table td:nth-child(2){font-size:14px;font-weight:900;color:var(--gold);letter-spacing:.5px;width:28%}
+.str-table td:last-child{font-size:11px;color:var(--muted2)}
+
+/* WOD */
+.wod-name{font-size:24px;font-weight:900;letter-spacing:1px;text-transform:uppercase;line-height:1;margin-bottom:4px}
+.wod-type-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.wtype{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border:1px solid}
+.wtype-amrap{color:#00c8a0;border-color:rgba(0,200,160,.4);background:rgba(0,200,160,.07)}
+.wtype-fortime{color:#e85c2a;border-color:rgba(232,92,42,.4);background:rgba(232,92,42,.07)}
+.wtype-emom{color:var(--gold);border-color:rgba(240,184,64,.4);background:rgba(240,184,64,.07)}
+.wtype-tabata{color:#c060e0;border-color:rgba(192,96,224,.4);background:rgba(192,96,224,.07)}
+.wtype-chipper{color:#4a9eff;border-color:rgba(74,158,255,.4);background:rgba(74,158,255,.07)}
+.wtype-rft{color:#ff8060;border-color:rgba(255,128,96,.4);background:rgba(255,128,96,.07)}
+.wtype-hero{color:#ff4060;border-color:rgba(255,64,96,.4);background:rgba(255,64,96,.07)}
+.wcap{font-size:10px;color:var(--muted2)}
+
+.mov-list{list-style:none;display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.mov-list li{display:flex;align-items:baseline;gap:8px;font-size:12px}
+.mov-list li::before{content:'—';color:var(--w2);font-size:10px;flex-shrink:0}
+.mreps{font-size:15px;font-weight:900;color:var(--white);min-width:44px;letter-spacing:.5px}
+.mname{color:#b0c0cc}
+.mnote{color:var(--muted);font-size:10px}
+
+.wod-cap-row{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2);border:1px solid var(--border2);padding:4px 10px;margin-top:2px}
+.wod-cap-row strong{color:var(--white);font-size:12px}
+.scaling{margin-top:8px;border-left:2px solid var(--border2);padding:6px 10px;font-size:10px;color:var(--muted);font-style:italic;line-height:1.5}
+
+/* REST DAY */
+.rest-note{padding:12px 14px;font-size:12px;color:var(--muted2);font-style:italic;line-height:1.6}
+
+/* TIPS */
+.tips-wrap{margin:8px 14px 20px;border:1px solid var(--border);background:var(--surface);padding:20px 16px}
+.tips-title{font-size:18px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--w1);margin-bottom:16px}
+.tip{display:flex;flex-direction:column;gap:4px;padding:10px 0;border-bottom:1px solid var(--border)}
+.tip:last-child{border-bottom:none}
+.tip strong{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700}
+.tip p{font-size:12px;color:var(--muted2);line-height:1.5}
+
+/* RECORDS */
+.records-wrap{margin:0 14px 40px;border:1px solid var(--border)}
+.rec-title{font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:14px;border-bottom:1px solid var(--border);color:var(--white)}
+.rec-table{width:100%;border-collapse:collapse}
+.rec-table th{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:8px 10px;text-align:left;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+.rec-table td{padding:9px 10px;border-bottom:1px solid rgba(30,40,48,.6);font-size:12px}
+.rec-table td:first-child{font-weight:600;color:var(--white)}
+.rec-table td:not(:first-child){color:var(--muted2);text-align:center;font-size:11px}
+.rec-table td:last-child{color:#5cc8c0;font-weight:600}
+@media(max-width:380px){
+  .hero h1{font-size:34px}
+  .str-table td:last-child{display:none}
+  .wnav-btn .wn-lbl{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-tag">Programación Mensual · CrossFit</div>
+  <h1>4 SEMANAS<br><span>DE FUEGO</span></h1>
+  <p class="hero-sub">Full Body · Fuerza variada · WODs cardiovasculares y metabólicos · 60 minutos exactos cada sesión.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-v">20</div><div class="stat-l">Sesiones</div></div>
+    <div class="stat"><div class="stat-v">60'</div><div class="stat-l">Por sesión</div></div>
+    <div class="stat"><div class="stat-v">20</div><div class="stat-l">WODs únicos</div></div>
+    <div class="stat"><div class="stat-v">6</div><div class="stat-l">Patrones</div></div>
+  </div>
+</div>
+
+<nav class="week-nav">
+  <button class="wnav-btn active" data-w="1" onclick="showWeek(1)"><span class="wn-num">S1</span><span class="wn-lbl">BASE</span></button>
+  <button class="wnav-btn" data-w="2" onclick="showWeek(2)"><span class="wn-num">S2</span><span class="wn-lbl">VOLUMEN</span></button>
+  <button class="wnav-btn" data-w="3" onclick="showWeek(3)"><span class="wn-num">S3</span><span class="wn-lbl">INTENSIDAD</span></button>
+  <button class="wnav-btn" data-w="4" onclick="showWeek(4)"><span class="wn-num">S4</span><span class="wn-lbl">PEAK</span></button>
+</nav>
+
+<!-- ═══════ SEMANA 1 ═══════ -->
+<div class="week-panel active" id="week1">
+  <div class="week-banner" data-num="1" style="border-color:var(--w1);background:rgba(0,200,160,.04)">
+    <div class="wb-label" style="color:var(--w1)">Semana 1</div>
+    <div class="wb-title" style="color:var(--w1)">Base y Técnica</div>
+    <div class="wb-desc">Cargas 65–75% · Aprende los movimientos · WODs cardiovasculares de introducción · Descubre tu ritmo</div>
+  </div>
+
+  <!-- D1 LUN -->
+  <div class="day-card open" id="d1">
+    <div class="day-toggle" onclick="tog('d1')">
+      <div class="day-num-box"><span class="dday">LUN</span><span class="dnum" style="color:var(--w1)">D1</span></div>
+      <div class="day-info">
+        <div class="day-title">Back Squat + AMRAP Cardio</div>
+        <div class="day-tags"><span class="dtag">Squat bilateral</span><span class="dtag">AMRAP 18 min</span></div>
+      </div>
+      <div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div>
+        <ul class="bullets"><li>2 rondas: 10 air squat + 10 hip circle/lado + 8 inchworm + 30 seg saltar comba</li><li>Activación glúteo: clam shells banda 15×2 · Movilidad tobillo 10 reps/lado</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div>
+        <div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody>
+          <tr><td>Back Squat</td><td>4 × 6</td><td>70% 1RM · 2.5 min</td></tr>
+          <tr><td>Goblet Squat profundo</td><td>3 × 10</td><td>KB media · pausa 2 seg</td></tr>
+          <tr><td>Lunge caminando</td><td>2 × 10/lado</td><td>Mancuernas · paso largo</td></tr>
+        </tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — OPEN ROAD</div>
+        <div class="wod-name">OPEN ROAD</div>
+        <div class="wod-type-row"><span class="wtype wtype-amrap">AMRAP</span><span class="wcap">18 minutos · registra rondas</span></div>
+        <ul class="mov-list">
+          <li><span class="mreps">400m</span><span class="mname">Carrera</span></li>
+          <li><span class="mreps">15</span><span class="mname">KB Swing americano <span class="mnote">(peso moderado)</span></span></li>
+          <li><span class="mreps">10</span><span class="mname">Box Jump <span class="mnote">(50 cm · step-down)</span></span></li>
+          <li><span class="mreps">15</span><span class="mname">Wall Ball <span class="mnote">(6–9 kg)</span></span></li>
+        </ul>
+        <div class="scaling">Carrera 300m, box jump 40cm, KB más ligera si es necesario.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div>
+        <ul class="bullets"><li>Pigeon stretch 90 seg/lado · Couch stretch 60 seg/lado · Child's pose 60 seg</li><li>Foam roller cuádriceps + isquiotibiales 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <!-- D2 MAR -->
+  <div class="day-card" id="d2">
+    <div class="day-toggle" onclick="tog('d2')">
+      <div class="day-num-box"><span class="dday">MAR</span><span class="dnum" style="color:var(--w1)">D2</span></div>
+      <div class="day-info"><div class="day-title">Press Banca + Chipper Cardio</div><div class="day-tags"><span class="dtag">Empuje horizontal</span><span class="dtag">Chipper for time</span></div></div>
+      <div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div>
+        <ul class="bullets"><li>2 rondas: 10 push-up + 10 band pull-apart + 8 face pull + shoulder circles</li><li>Sets activación banca: 2×10 barra vacía · rango completo</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div>
+        <div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody>
+          <tr><td>Press de Banca</td><td>4 × 6</td><td>70% 1RM · 2.5 min</td></tr>
+          <tr><td>DB Row unilateral</td><td>3 × 10/lado</td><td>Apoyo banco · codo pegado</td></tr>
+          <tr><td>Push-Up explosivo</td><td>3 × 8</td><td>Máxima velocidad subida</td></tr>
+        </tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — CARDIO STORM</div>
+        <div class="wod-name">CARDIO STORM</div>
+        <div class="wod-type-row"><span class="wtype wtype-chipper">CHIPPER</span><span class="wcap">Cap: 18 min</span></div>
+        <ul class="mov-list">
+          <li><span class="mreps">50</span><span class="mname">Double Under <span class="mnote">(o 100 singles)</span></span></li>
+          <li><span class="mreps">40</span><span class="mname">Wall Ball <span class="mnote">(6–9 kg)</span></span></li>
+          <li><span class="mreps">30</span><span class="mname">Box Jump <span class="mnote">(50 cm)</span></span></li>
+          <li><span class="mreps">20</span><span class="mname">Push-Up <span class="mnote">(estricto)</span></span></li>
+          <li><span class="mreps">10</span><span class="mname">Burpee to target</span></li>
+          <li><span class="mreps">400m</span><span class="mname">Carrera final</span></li>
+        </ul>
+        <div class="scaling">Singles, caja 40cm, rodillas en push-up si es necesario.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div>
+        <ul class="bullets"><li>Doorway chest stretch 60 seg/lado · Thoracic extension en roller 2 min</li><li>Foam roller pectoral + bíceps 3 min</li></ul></div>
+    </div>
+  </div>
+
+  <!-- D3 MIÉ DESCANSO -->
+  <div class="day-card rest-card" id="d3">
+    <div class="day-toggle" onclick="tog('d3')">
+      <div class="day-num-box"><span class="dday">MIÉ</span><span class="dnum" style="color:var(--muted)">D3</span></div>
+      <div class="day-info"><div class="day-title" style="color:var(--muted2)">Descanso Activo</div><div class="day-tags"><span class="dtag">Movilidad · Recuperación</span></div></div>
+      <div class="day-right"><span class="chevron">▾</span></div>
+    </div>
+    <div class="day-body"><div class="rest-note">Caminata 20–30 min o bici suave. Movilidad de cadera + apertura de hombros. Sin carga ni impacto hoy.</div></div>
+  </div>
+
+  <!-- D4 JUE -->
+  <div class="day-card" id="d4">
+    <div class="day-toggle" onclick="tog('d4')">
+      <div class="day-num-box"><span class="dday">JUE</span><span class="dnum" style="color:var(--w1)">D4</span></div>
+      <div class="day-info"><div class="day-title">Press Militar + EMOM Metabólico</div><div class="day-tags"><span class="dtag">Empuje vertical</span><span class="dtag">EMOM 20 min</span></div></div>
+      <div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div>
+        <ul class="bullets"><li>2 rondas: 10 press con banda + 10 face pull + 8 halos KB + pass-through con palo</li><li>Core activación: 10 hollow body rocks + 10 arch rocks · 2×8 press vacío</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div>
+        <div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody>
+          <tr><td>Strict Press (Militar)</td><td>4 × 6</td><td>68% 1RM · core activo</td></tr>
+          <tr><td>Arnold Press DB</td><td>3 × 10</td><td>Peso moderado · rango completo</td></tr>
+          <tr><td>Hollow Body Hold</td><td>3 × 20 seg</td><td>Forma estricta · respiración</td></tr>
+        </tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — VOLTAGE</div>
+        <div class="wod-name">VOLTAGE</div>
+        <div class="wod-type-row"><span class="wtype wtype-emom">EMOM × 5 ciclos</span><span class="wcap">20 minutos · 4 movimientos</span></div>
+        <ul class="mov-list">
+          <li><span class="mreps">Min 1</span><span class="mname">12 Thruster ligero <span class="mnote">(barra o KB)</span></span></li>
+          <li><span class="mreps">Min 2</span><span class="mname">15 Box Step-Up <span class="mnote">(alternando · sin peso)</span></span></li>
+          <li><span class="mreps">Min 3</span><span class="mname">10 Hang Power Clean <span class="mnote">(técnico)</span></span></li>
+          <li><span class="mreps">Min 4</span><span class="mname">200m Row o bici <span class="mnote">(máxima potencia)</span></span></li>
+        </ul>
+        <div class="scaling">Reduce a 10 thrusters, 12 step-up, 6 HPC si no llegas al descanso.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div>
+        <ul class="bullets"><li>Lat stretch en barra 60 seg/lado · Squat hold 90 seg · Hip flexor stretch 60 seg/lado</li><li>Foam roller espalda alta + TFL 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <!-- D5 VIE -->
+  <div class="day-card" id="d5">
+    <div class="day-toggle" onclick="tog('d5')">
+      <div class="day-num-box"><span class="dday">VIE</span><span class="dnum" style="color:var(--w1)">D5</span></div>
+      <div class="day-info"><div class="day-title">Deadlift + For Time Explosivo</div><div class="day-tags"><span class="dtag">Cadena posterior</span><span class="dtag">5 RFT</span></div></div>
+      <div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div>
+        <ul class="bullets"><li>2 rondas: 10 RDL sin peso + 10 glute bridge + 10 bird dog/lado</li><li>Hip hinge drill con palo 15 reps · Band pull-through 15×2</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div>
+        <div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody>
+          <tr><td>Deadlift convencional</td><td>4 × 5</td><td>72% 1RM · 3 min</td></tr>
+          <tr><td>Romanian Deadlift</td><td>3 × 10</td><td>60% · tempo 3-1-1</td></tr>
+          <tr><td>KB Swing pesado</td><td>3 × 12</td><td>Americano · potencia cadera</td></tr>
+        </tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — FIRE & ICE</div>
+        <div class="wod-name">FIRE & ICE</div>
+        <div class="wod-type-row"><span class="wtype wtype-rft">5 RFT</span><span class="wcap">Cap: 18 min</span></div>
+        <ul class="mov-list">
+          <li><span class="mreps">400m</span><span class="mname">Carrera</span></li>
+          <li><span class="mreps">15</span><span class="mname">KB Swing americano</span></li>
+          <li><span class="mreps">10</span><span class="mname">Burpee Box Jump Over <span class="mnote">(caja 50cm)</span></span></li>
+        </ul>
+        <div class="scaling">Carrera 300m, step over en vez de jump over, 4 rondas.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div>
+        <ul class="bullets"><li>Supine hamstring stretch 90 seg/lado · Supine twist 60 seg/lado</li><li>Foam roller lumbar + glúteos 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <!-- D6 SÁB -->
+  <div class="day-card" id="d6">
+    <div class="day-toggle" onclick="tog('d6')">
+      <div class="day-num-box"><span class="dday">SÁB</span><span class="dnum" style="color:var(--w1)">D6</span></div>
+      <div class="day-info"><div class="day-title">Pull-Up / Ring Row + Tabata Cardio</div><div class="day-tags"><span class="dtag">Tirón vertical</span><span class="dtag">Tabata 4 bloques</span></div></div>
+      <div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div>
+        <ul class="bullets"><li>2 rondas: 10 ring row + 10 scapular pull + 8 face pull + 5 dead hang</li><li>Band pull-apart 20×2 · 3×5 pull-up activación</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div>
+        <div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody>
+          <tr><td>Pull-Up (o Ring Row)</td><td>5 × 5</td><td>Máxima calidad · 2.5 min</td></tr>
+          <tr><td>Pendlay Row</td><td>3 × 8</td><td>65% · explosivo en subida</td></tr>
+          <tr><td>Farmer Carry</td><td>3 × 30m</td><td>KB pesada · core activo</td></tr>
+        </tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — PULSEFIRE</div>
+        <div class="wod-name">PULSEFIRE</div>
+        <div class="wod-type-row"><span class="wtype wtype-tabata">TABATA</span><span class="wcap">20s/10s × 8 rondas · 4 bloques</span></div>
+        <ul class="mov-list">
+          <li><span class="mreps">Blq 1</span><span class="mname">Air Squat explosivo</span></li>
+          <li><span class="mreps">Blq 2</span><span class="mname">Burpee <span class="mnote">(máxima velocidad)</span></span></li>
+          <li><span class="mreps">Blq 3</span><span class="mname">KB Swing ruso</span></li>
+          <li><span class="mreps">Blq 4</span><span class="mname">Mountain Climber <span class="mnote">(alternando rápido)</span></span></li>
+        </ul>
+        <div class="wod-cap-row"><strong>1 min descanso</strong> entre bloques · Score: mín reps/bloque</div>
+        <div class="scaling">Elige ritmo mantenible las 8 rondas. La consistencia es el objetivo.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div>
+        <ul class="bullets"><li>Lat stretch 60 seg/lado · Child's pose 60 seg · Piriforme stretch 90 seg/lado</li><li>Foam roller espalda + glúteos 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <!-- D7 DOM -->
+  <div class="day-card rest-card" id="d7">
+    <div class="day-toggle" onclick="tog('d7')">
+      <div class="day-num-box"><span class="dday">DOM</span><span class="dnum" style="color:var(--muted)">D7</span></div>
+      <div class="day-info"><div class="day-title" style="color:var(--muted2)">Descanso Total</div><div class="day-tags"><span class="dtag">Recuperación · Sueño</span></div></div>
+      <div class="day-right"><span class="chevron">▾</span></div>
+    </div>
+    <div class="day-body"><div class="rest-note">Descanso completo. Sueño 7–9 h. La semana 2 sube el volumen — descansa bien hoy.</div></div>
+  </div>
+</div>
+
+<!-- ═══════ SEMANA 2 ═══════ -->
+<div class="week-panel" id="week2">
+  <div class="week-banner" data-num="2" style="border-color:var(--w2);background:rgba(232,92,42,.04)">
+    <div class="wb-label" style="color:var(--w2)">Semana 2</div>
+    <div class="wb-title" style="color:var(--w2)">Volumen — Más trabajo</div>
+    <div class="wb-desc">Cargas 73–80% · Series extra · WODs más largos y exigentes · Consolida todos los patrones</div>
+  </div>
+
+  <div class="day-card" id="d8"><div class="day-toggle" onclick="tog('d8')"><div class="day-num-box"><span class="dday">LUN</span><span class="dnum" style="color:var(--w2)">D8</span></div><div class="day-info"><div class="day-title">Front Squat + AMRAP Largo</div><div class="day-tags"><span class="dtag">Squat frontal</span><span class="dtag">AMRAP 20 min</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>2 rondas: 8 front squat vacío + 10 reverse lunge + 6 deep squat hold 10 seg</li><li>Terminal knee extension banda 15×2 · Rampa: 1×5 65% + 1×3 72% FS</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Front Squat</td><td>5 × 4</td><td>75% 1RM · 3 min</td></tr><tr><td>Bulgarian Split Squat</td><td>4 × 8/lado</td><td>Mancuernas · más pesado</td></tr><tr><td>Pistol asistido</td><td>3 × 6/lado</td><td>TRX o poste · control</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — DEEP WATER</div><div class="wod-name">DEEP WATER</div><div class="wod-type-row"><span class="wtype wtype-amrap">AMRAP</span><span class="wcap">20 minutos</span></div><ul class="mov-list"><li><span class="mreps">5</span><span class="mname">Power Clean <span class="mnote">(65% 1RM)</span></span></li><li><span class="mreps">10</span><span class="mname">Box Jump <span class="mnote">(50 cm)</span></span></li><li><span class="mreps">15</span><span class="mname">Wall Ball <span class="mnote">(8–9 kg)</span></span></li><li><span class="mreps">250m</span><span class="mname">Row <span class="mnote">(ritmo sostenido)</span></span></li></ul><div class="scaling">Hang power clean, caja 45cm, 6 kg wall ball.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Couch stretch 90 seg/lado · Pigeon profundo 90 seg/lado</li><li>Foam roller cuádriceps + IT band 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d9"><div class="day-toggle" onclick="tog('d9')"><div class="day-num-box"><span class="dday">MAR</span><span class="dnum" style="color:var(--w2)">D9</span></div><div class="day-info"><div class="day-title">Press Inclinado + For Time Pesado</div><div class="day-tags"><span class="dtag">Empuje horizontal</span><span class="dtag">For Time cardio</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>2 rondas: 10 push-up con banda + 10 WY scarecrow + 8 dips asistidos</li><li>Activación rotador: 15 rotación externa con banda × 2</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Press Inclinado (30°)</td><td>5 × 5</td><td>73% 1RM · 2.5 min</td></tr><tr><td>Dips en paralelas</td><td>4 × 8</td><td>Asistido · codo 90°</td></tr><tr><td>Face Pull con banda</td><td>3 × 15</td><td>Salud hombro</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — UPPER GRIND</div><div class="wod-name">UPPER GRIND</div><div class="wod-type-row"><span class="wtype wtype-fortime">FOR TIME</span><span class="wcap">Cap: 18 min</span></div><ul class="mov-list"><li><span class="mreps">21-15-9</span><span class="mname">Push Press <span class="mnote">(barra media)</span></span></li><li><span class="mreps">21-15-9</span><span class="mname">Pull-Up <span class="mnote">(o ring row)</span></span></li><li><span class="mreps">21-15-9</span><span class="mname">Burpee</span></li><li><span class="mreps">400m</span><span class="mname">Carrera entre cada ronda</span></li></ul><div class="scaling">Push press ligero, ring row, 3 rondas sin carrera si es primera vez.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Doorway chest stretch 2 min · Lat stretch con banda 60 seg/lado</li><li>Foam roller pectoral + bíceps + tríceps 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card rest-card" id="d10"><div class="day-toggle" onclick="tog('d10')"><div class="day-num-box"><span class="dday">MIÉ</span><span class="dnum" style="color:var(--muted)">D10</span></div><div class="day-info"><div class="day-title" style="color:var(--muted2)">Descanso Activo</div><div class="day-tags"><span class="dtag">Movilidad</span></div></div><div class="day-right"><span class="chevron">▾</span></div></div>
+    <div class="day-body"><div class="rest-note">Yoga de movilidad 30 min o natación suave. Sin impacto. Trabajo preventivo hombro + cadera.</div></div>
+  </div>
+
+  <div class="day-card" id="d11"><div class="day-toggle" onclick="tog('d11')"><div class="day-num-box"><span class="dday">JUE</span><span class="dnum" style="color:var(--w2)">D11</span></div><div class="day-info"><div class="day-title">Clean & Jerk + EMOM Pesado</div><div class="day-tags"><span class="dtag">Olímpico completo</span><span class="dtag">EMOM 20 min</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>Técnica: DL → high pull → muscle clean → FS → push press vacío × 5</li><li>Band pull-apart 20×2 · Rampa: 5 reps 50% · 3×60% · 1×70% C&J</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Clean & Jerk</td><td>6 × 2</td><td>72–78% 1RM · técnica</td></tr><tr><td>Jerk balance</td><td>3 × 5</td><td>Técnica recepción</td></tr><tr><td>Front Squat pesado</td><td>3 × 3</td><td>78% · pausa 2 seg fondo</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — THUNDER</div><div class="wod-name">THUNDER</div><div class="wod-type-row"><span class="wtype wtype-emom">EMOM × 5 ciclos</span><span class="wcap">20 min · 4 movs</span></div><ul class="mov-list"><li><span class="mreps">Min 1</span><span class="mname">8 Clean & Jerk <span class="mnote">(70% · técnico)</span></span></li><li><span class="mreps">Min 2</span><span class="mname">15 Box Jump <span class="mnote">(55 cm)</span></span></li><li><span class="mreps">Min 3</span><span class="mname">12 Toes to Bar <span class="mnote">(o knee raise)</span></span></li><li><span class="mreps">Min 4</span><span class="mname">Max cal Row <span class="mnote">(potencia máxima)</span></span></li></ul><div class="scaling">Hang clean + push press, caja 50cm, knee raise en barra.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Squat hold 90 seg · Wrist + overhead stretch 2 min</li><li>Foam roller completo + movilidad torácica 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d12"><div class="day-toggle" onclick="tog('d12')"><div class="day-num-box"><span class="dday">VIE</span><span class="dnum" style="color:var(--w2)">D12</span></div><div class="day-info"><div class="day-title">Hip Thrust Pesado + Couplet Explosivo</div><div class="day-tags"><span class="dtag">Glúteos · Hinge</span><span class="dtag">AMRAP couplet</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>2 rondas: 15 frog pump + 12 banded kick-back/lado + 10 lateral band walk</li><li>Hip thrust BW × 10 con squeeze 2 seg · 3 broad jump activación</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Hip Thrust barra</td><td>5 × 5</td><td>Máximo progresivo · 2.5 min</td></tr><tr><td>Sumo Deadlift</td><td>3 × 6</td><td>75% · estabilidad pelvis</td></tr><tr><td>Single-leg DL</td><td>3 × 8/lado</td><td>KB · balance + glúteo</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — GLUTE ROCKET</div><div class="wod-name">GLUTE ROCKET</div><div class="wod-type-row"><span class="wtype wtype-amrap">AMRAP COUPLET</span><span class="wcap">20 minutos</span></div><ul class="mov-list"><li><span class="mreps">15</span><span class="mname">KB Swing pesado <span class="mnote">(americano)</span></span></li><li><span class="mreps">10</span><span class="mname">Broad Jump <span class="mnote">(máxima distancia)</span></span></li><li><span class="mreps">5</span><span class="mname">Muscle Up <span class="mnote">(o 10 ring dip + ring row)</span></span></li><li><span class="mreps">200m</span><span class="mname">Sprint</span></li></ul><div class="scaling">KB rusa si el americano pesado no es seguro. Bar MU → jumping MU.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Piriforme stretch 90 seg/lado · Happy baby 60 seg · Supine twist 60 seg/lado</li><li>Foam roller glúteos + IT band 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d13"><div class="day-toggle" onclick="tog('d13')"><div class="day-num-box"><span class="dday">SÁB</span><span class="dnum" style="color:var(--w2)">D13</span></div><div class="day-info"><div class="day-title">Pull-Up Ponderado + Chipper Metabólico</div><div class="day-tags"><span class="dtag">Tirón vertical</span><span class="dtag">Chipper 6 movs</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>2 rondas: 5 pull-up activación + 10 scapular pull + 8 ring row lento</li><li>3×3 pull-up máx calidad · Band pull-apart 20×2</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Pull-Up ponderado</td><td>5 × 4</td><td>+2–5 kg · 3 min</td></tr><tr><td>Seal Row / Ch-Supported Row</td><td>4 × 10</td><td>Mancuernas · rango completo</td></tr><tr><td>Pallof Press</td><td>3 × 12/lado</td><td>Antirotación · core</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — METCON BEAST</div><div class="wod-name">METCON BEAST</div><div class="wod-type-row"><span class="wtype wtype-chipper">CHIPPER</span><span class="wcap">Cap: 20 min</span></div><ul class="mov-list"><li><span class="mreps">800m</span><span class="mname">Carrera</span></li><li><span class="mreps">50</span><span class="mname">Wall Ball <span class="mnote">(8–9 kg)</span></span></li><li><span class="mreps">40</span><span class="mname">KB Swing americano</span></li><li><span class="mreps">30</span><span class="mname">Box Jump Over</span></li><li><span class="mreps">20</span><span class="mname">Pull-Up <span class="mnote">(o ring row)</span></span></li><li><span class="mreps">10</span><span class="mname">Thruster <span class="mnote">(barra media)</span></span></li></ul><div class="scaling">Carrera 600m, ring row, thruster ligero.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Lat stretch en barra 60 seg/lado · Child's pose 90 seg · Pigeon 90 seg/lado</li><li>Foam roller espalda completa + glúteos 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card rest-card" id="d14"><div class="day-toggle" onclick="tog('d14')"><div class="day-num-box"><span class="dday">DOM</span><span class="dnum" style="color:var(--muted)">D14</span></div><div class="day-info"><div class="day-title" style="color:var(--muted2)">Descanso Total</div><div class="day-tags"><span class="dtag">Recuperación</span></div></div><div class="day-right"><span class="chevron">▾</span></div></div>
+    <div class="day-body"><div class="rest-note">Descanso total. Semana alta en volumen. Proteína 1.8–2 g/kg y sueño 8 h mínimo.</div></div>
+  </div>
+</div>
+
+<!-- ═══════ SEMANA 3 ═══════ -->
+<div class="week-panel" id="week3">
+  <div class="week-banner" data-num="3" style="border-color:var(--w3);background:rgba(74,158,255,.04)">
+    <div class="wb-label" style="color:var(--w3)">Semana 3</div>
+    <div class="wb-title" style="color:var(--w3)">Intensidad — Subir el umbral</div>
+    <div class="wb-desc">Cargas 80–90% · Menos reps más peso · WODs cortos y muy explosivos · Tests parciales de fuerza</div>
+  </div>
+
+  <div class="day-card" id="d15"><div class="day-toggle" onclick="tog('d15')"><div class="day-num-box"><span class="dday">LUN</span><span class="dnum" style="color:var(--w3)">D15</span></div><div class="day-info"><div class="day-title">Back Squat Pesado + 10 RFT Explosivo</div><div class="day-tags"><span class="dtag">3RM Squat</span><span class="dtag">10 RFT</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>Rampa: 5×50% · 3×65% · 2×75% · 1×82% back squat</li><li>2 rondas: 6 box squat + 5 jump squat + 8 lateral lunge</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Back Squat @ 85%</td><td>1 × 3</td><td>Serie principal · récord</td></tr><tr><td>Back Squat back-off</td><td>4 × 3</td><td>80% · 3 min descanso</td></tr><tr><td>Jump Squat con barra</td><td>3 × 5</td><td>30% 1RM · potencia máx</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — THUNDER LEGS</div><div class="wod-name">THUNDER LEGS</div><div class="wod-type-row"><span class="wtype wtype-rft">10 RFT</span><span class="wcap">Cap: 16 min</span></div><ul class="mov-list"><li><span class="mreps">3</span><span class="mname">Power Clean <span class="mnote">(72% 1RM)</span></span></li><li><span class="mreps">6</span><span class="mname">Box Jump <span class="mnote">(55 cm)</span></span></li><li><span class="mreps">9</span><span class="mname">Push-Up explosivo</span></li></ul><div class="scaling">HPC 65%, caja 50cm, rodillas en push-up.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Pigeon 90 seg/lado · Deep squat hold 2 min · Calf stretch 60 seg/lado</li><li>Foam roller cuádriceps + TFL 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d16"><div class="day-toggle" onclick="tog('d16')"><div class="day-num-box"><span class="dday">MAR</span><span class="dnum" style="color:var(--w3)">D16</span></div><div class="day-info"><div class="day-title">Press Militar Pesado + AMRAP Explosivo</div><div class="day-tags"><span class="dtag">Empuje vertical · 3RM</span><span class="dtag">AMRAP 15 min</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>Rampa: 5×55% · 3×68% · 2×78% press militar</li><li>2 rondas: 10 band pull-apart + 8 shoulder W + 6 push-up perfecto</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Press Militar @ 83%</td><td>1 × 3</td><td>Récord parcial · braceado</td></tr><tr><td>Push Press</td><td>4 × 4</td><td>78% · velocidad empuje</td></tr><tr><td>Handstand Push-Up</td><td>3 × max</td><td>O pike push-up · 2 min</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — OVERHEAD BLAST</div><div class="wod-name">OVERHEAD BLAST</div><div class="wod-type-row"><span class="wtype wtype-amrap">AMRAP</span><span class="wcap">15 min · corto y explosivo</span></div><ul class="mov-list"><li><span class="mreps">5</span><span class="mname">Thruster pesado <span class="mnote">(75% 1RM)</span></span></li><li><span class="mreps">5</span><span class="mname">Bar Muscle Up <span class="mnote">(o 10 C2B pull-up)</span></span></li><li><span class="mreps">10</span><span class="mname">Box Jump <span class="mnote">(55 cm)</span></span></li><li><span class="mreps">200m</span><span class="mname">Sprint</span></li></ul><div class="scaling">Thruster 70%, jumping C2B, caja 50cm, sprint 150m.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Overhead lat stretch 90 seg/lado · Wrist + forearm stretch 2 min</li><li>Foam roller hombro + espalda alta 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card rest-card" id="d17"><div class="day-toggle" onclick="tog('d17')"><div class="day-num-box"><span class="dday">MIÉ</span><span class="dnum" style="color:var(--muted)">D17</span></div><div class="day-info"><div class="day-title" style="color:var(--muted2)">Descanso Activo</div><div class="day-tags"><span class="dtag">Recuperación intensiva</span></div></div><div class="day-right"><span class="chevron">▾</span></div></div>
+    <div class="day-body"><div class="rest-note">Recuperación activa prioritaria. 20 min movilidad + 10 min preventivo hombro y rodilla. Opcional: contraste de temperatura.</div></div>
+  </div>
+
+  <div class="day-card" id="d18"><div class="day-toggle" onclick="tog('d18')"><div class="day-num-box"><span class="dday">JUE</span><span class="dnum" style="color:var(--w3)">D18</span></div><div class="day-info"><div class="day-title">Deadlift — Intento 1RM + WOD Corto</div><div class="day-tags"><span class="dtag">TEST 1RM DL</span><span class="dtag">AMRAP 15 min</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>2 rondas: 8 KB DL + 10 glute bridge SL + 6 Pallof press/lado</li><li>Rampa: 5×50% · 3×65% · 2×77% · 1×85% · 1×91%+ DL</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Deadlift — INTENTO 1RM</td><td>1 × 1</td><td>¡Nuevo récord personal!</td></tr><tr><td>DL back-off</td><td>3 × 3</td><td>80% · velocidad</td></tr><tr><td>Nordic Curl asistido</td><td>3 × 5</td><td>Excéntrico isquios</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — POSTERIOR POWER</div><div class="wod-name">POSTERIOR POWER</div><div class="wod-type-row"><span class="wtype wtype-amrap">AMRAP</span><span class="wcap">15 min · post-RM</span></div><ul class="mov-list"><li><span class="mreps">10</span><span class="mname">KB Swing pesado <span class="mnote">(americano)</span></span></li><li><span class="mreps">8</span><span class="mname">Box Jump <span class="mnote">(55 cm)</span></span></li><li><span class="mreps">6</span><span class="mname">Hang Power Snatch</span></li><li><span class="mreps">200m</span><span class="mname">Carrera</span></li></ul><div class="scaling">WOD corto por respeto al SNC post-RM. Técnica ante todo.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Supine hamstring 90 seg/lado · Cat-cow 2 min · Piriforme stretch 60 seg/lado</li><li>Foam roller lumbar + glúteos 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d19"><div class="day-toggle" onclick="tog('d19')"><div class="day-num-box"><span class="dday">VIE</span><span class="dnum" style="color:var(--w3)">D19</span></div><div class="day-info"><div class="day-title">Pull-Up Pesado + Hero WOD</div><div class="day-tags"><span class="dtag">Tirón máximo</span><span class="dtag" style="color:#ff4060;border-color:rgba(255,64,96,.3)">Hero WOD</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>2 rondas: 5 pull-up calidad + 10 scapular pull + dead hang 20 seg</li><li>3×3 pull-up estricto · Band face pull 15×2</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Pull-Up ponderado</td><td>5 × 3</td><td>+5–8 kg · 3 min</td></tr><tr><td>Pendlay Row pesado</td><td>4 × 5</td><td>78% · explosivo</td></tr><tr><td>L-Sit / Tuck L-Sit</td><td>3 × max</td><td>Paralelas o suelo · core</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — NICOLE JR.</div><div class="wod-name">NICOLE JR.</div><div class="wod-type-row"><span class="wtype wtype-hero">HERO</span><span class="wcap">AMRAP 20 min</span></div><ul class="mov-list"><li><span class="mreps">400m</span><span class="mname">Carrera</span></li><li><span class="mreps">Max</span><span class="mname">Pull-Up <span class="mnote">(o ring row · anota reps/ronda)</span></span></li></ul><div class="scaling">Ring row o jumping pull-up. Forma estricta siempre. Score: rondas + total pull-up acumuladas.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Lat stretch en barra 2 min · Child's pose 60 seg · Pigeon 90 seg/lado</li><li>Foam roller espalda + glúteos 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d20"><div class="day-toggle" onclick="tog('d20')"><div class="day-num-box"><span class="dday">SÁB</span><span class="dnum" style="color:var(--w3)">D20</span></div><div class="day-info"><div class="day-title">Power Snatch + Chipper Exigente</div><div class="day-tags"><span class="dtag">Olímpico · Snatch</span><span class="dtag">Chipper 6 movs</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>Técnica: snatch DL → high pull → muscle snatch → OHS vacío × 5</li><li>Band pass-through 20 reps · Rampa: 5×50% · 3×62% · 1×70% snatch</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Power Snatch</td><td>6 × 2</td><td>72–78% 1RM · velocidad</td></tr><tr><td>Overhead Squat</td><td>4 × 4</td><td>65% · estabilidad</td></tr><tr><td>Snatch Balance</td><td>3 × 3</td><td>55% · recepción</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — IRON WILL</div><div class="wod-name">IRON WILL</div><div class="wod-type-row"><span class="wtype wtype-chipper">CHIPPER</span><span class="wcap">Cap: 20 min</span></div><ul class="mov-list"><li><span class="mreps">800m</span><span class="mname">Carrera</span></li><li><span class="mreps">50</span><span class="mname">Wall Ball <span class="mnote">(9 kg)</span></span></li><li><span class="mreps">40</span><span class="mname">KB Swing americano <span class="mnote">(pesado)</span></span></li><li><span class="mreps">30</span><span class="mname">Box Jump <span class="mnote">(55 cm)</span></span></li><li><span class="mreps">20</span><span class="mname">Power Snatch <span class="mnote">(ligero)</span></span></li><li><span class="mreps">10</span><span class="mname">Bar Muscle Up <span class="mnote">(o 20 pull-up)</span></span></li></ul><div class="scaling">Carrera 600m, C2B o ring row, caja 50cm.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Seated forward fold 2 min · Lateral hip stretch 90 seg/lado</li><li>Thoracic extension en roller 2 min · Foam roller completo 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card rest-card" id="d21"><div class="day-toggle" onclick="tog('d21')"><div class="day-num-box"><span class="dday">DOM</span><span class="dnum" style="color:var(--muted)">D21</span></div><div class="day-info"><div class="day-title" style="color:var(--muted2)">Descanso Total — Supercompensación</div><div class="day-tags"><span class="dtag">Recuperación completa</span></div></div><div class="day-right"><span class="chevron">▾</span></div></div>
+    <div class="day-body"><div class="rest-note">Descanso total obligatorio. La semana de intensidad lo exige. Tras este descanso comienza la semana peak — estarás más fuerte.</div></div>
+  </div>
+</div>
+
+<!-- ═══════ SEMANA 4 ═══════ -->
+<div class="week-panel" id="week4">
+  <div class="week-banner" data-num="4" style="border-color:var(--w4);background:rgba(192,96,224,.04)">
+    <div class="wb-label" style="color:var(--w4)">Semana 4</div>
+    <div class="wb-title" style="color:var(--w4)">Peak + Deload</div>
+    <div class="wb-desc">Lun–Mié: tests de 1RM en levantamientos principales · Jue–Sáb: deload activo 60% · WODs divertidos</div>
+  </div>
+
+  <div class="day-card" id="d22"><div class="day-toggle" onclick="tog('d22')"><div class="day-num-box"><span class="dday">LUN</span><span class="dnum" style="color:var(--w4)">D22</span></div><div class="day-info"><div class="day-title">Back Squat — TEST 1RM + WOD Suave</div><div class="day-tags"><span class="dtag" style="color:var(--w4);border-color:rgba(192,96,224,.3)">TEST RÉCORD SQUAT</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 10 min</div><ul class="bullets"><li>Movilidad completa 3 min: tobillo + cadera + torácica</li><li>Rampa: 10×40% · 5×55% · 3×68% · 2×78% · 1×86% · 1×91% · 1×96%+ BS</li><li>4–5 min descanso completo antes del intento</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 22 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Back Squat — INTENTO 1RM</td><td>1 × 1</td><td>¡RÉCORD PERSONAL!</td></tr><tr><td>Back Squat back-off</td><td>2 × 5</td><td>75% · celebración</td></tr><tr><td>Goblet Squat</td><td>2 × 10</td><td>KB ligera · cierre</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — VICTORY LAP</div><div class="wod-name">VICTORY LAP</div><div class="wod-type-row"><span class="wtype wtype-amrap">AMRAP</span><span class="wcap">12 min · 65% intensidad</span></div><ul class="mov-list"><li><span class="mreps">10</span><span class="mname">Goblet Squat <span class="mnote">(KB ligera)</span></span></li><li><span class="mreps">10</span><span class="mname">Ring Row</span></li><li><span class="mreps">200m</span><span class="mname">Row o bici suave</span></li></ul><div class="scaling">No compitas en el WOD. Es el regalo post-récord. Disfrútalo.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Pigeon profundo 2 min/lado · Couch stretch 90 seg/lado · Happy baby 60 seg</li><li>Foam roller completo tren inferior + glúteos 5 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d23"><div class="day-toggle" onclick="tog('d23')"><div class="day-num-box"><span class="dday">MAR</span><span class="dnum" style="color:var(--w4)">D23</span></div><div class="day-info"><div class="day-title">Press Banca — TEST 1RM + WOD Suave</div><div class="day-tags"><span class="dtag" style="color:var(--w4);border-color:rgba(192,96,224,.3)">TEST RÉCORD PRESS</span></div></div><div class="day-right"><span class="time-tag">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 10 min</div><ul class="bullets"><li>Rampa press banca: 10×40% · 5×55% · 3×68% · 2×78% · 1×86% · 1×91%+</li><li>4 min descanso antes del intento · Band pull-apart 20×2</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza — 22 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Press Banca — INTENTO 1RM</td><td>1 × 1</td><td>¡RÉCORD PERSONAL!</td></tr><tr><td>Press back-off</td><td>2 × 5</td><td>75% · técnica limpia</td></tr><tr><td>Push-Up</td><td>2 × max</td><td>Hasta el fallo · cierre</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — PRESS LEGACY</div><div class="wod-name">PRESS LEGACY</div><div class="wod-type-row"><span class="wtype wtype-rft">3 RFT</span><span class="wcap">Cap: 12 min · suave</span></div><ul class="mov-list"><li><span class="mreps">10</span><span class="mname">KB Swing <span class="mnote">(moderado)</span></span></li><li><span class="mreps">10</span><span class="mname">Box Step-Up <span class="mnote">(sin peso · alt)</span></span></li><li><span class="mreps">10</span><span class="mname">Push-Up</span></li><li><span class="mreps">200m</span><span class="mname">Carrera suave</span></li></ul><div class="scaling">Intensidad 65%. Activo pero recuperador.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 10 min</div><ul class="bullets"><li>Chest stretch en pared 90 seg/lado · Thoracic extension 2 min</li><li>Foam roller pectoral + bíceps + espalda alta 4 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card rest-card" id="d24"><div class="day-toggle" onclick="tog('d24')"><div class="day-num-box"><span class="dday">MIÉ</span><span class="dnum" style="color:var(--muted)">D24</span></div><div class="day-info"><div class="day-title" style="color:var(--muted2)">Descanso / Test Pull-Up Opcional</div><div class="day-tags"><span class="dtag">Descanso · Test max reps</span></div></div><div class="day-right"><span class="chevron">▾</span></div></div>
+    <div class="day-body"><div class="rest-note">Opcional: test de pull-ups máximas en 1 set estricto. Anota el número. Luego descanso y movilidad completa 30 min.</div></div>
+  </div>
+
+  <div class="day-card" id="d25"><div class="day-toggle" onclick="tog('d25')"><div class="day-num-box"><span class="dday">JUE</span><span class="dnum" style="color:rgba(192,96,224,.5)">D25</span></div><div class="day-info"><div class="day-title" style="color:#9090a0">DELOAD — Squat + Press Ligero</div><div class="day-tags"><span class="dtag">Deload · 60% cargas</span></div></div><div class="day-right"><span class="time-tag" style="color:var(--muted2)">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>2 rondas suaves: 10 air squat + 8 push-up + 8 ring row + 6 inchworm</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza Deload — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Back Squat deload</td><td>3 × 5</td><td>60% 1RM · fluido</td></tr><tr><td>Press Militar deload</td><td>3 × 6</td><td>58% · rango completo</td></tr><tr><td>Pull-Up suave</td><td>3 × 5</td><td>Sin peso · calidad</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — GOOD VIBES</div><div class="wod-name">GOOD VIBES</div><div class="wod-type-row"><span class="wtype wtype-amrap">AMRAP</span><span class="wcap">20 min · conversación constante</span></div><ul class="mov-list"><li><span class="mreps">10</span><span class="mname">KB Swing suave</span></li><li><span class="mreps">10</span><span class="mname">Box Step-Up</span></li><li><span class="mreps">10</span><span class="mname">Ring Row</span></li><li><span class="mreps">10</span><span class="mname">Air Squat</span></li><li><span class="mreps">200m</span><span class="mname">Carrera suave</span></li></ul><div class="scaling">Mantén conversación todo el WOD. Intensidad 60–65%.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 12 min</div><ul class="bullets"><li>Movilidad completa: 4 min cadera + 4 min hombro + 2 min tobillo + 2 min respiración</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d26"><div class="day-toggle" onclick="tog('d26')"><div class="day-num-box"><span class="dday">VIE</span><span class="dnum" style="color:rgba(192,96,224,.5)">D26</span></div><div class="day-info"><div class="day-title" style="color:#9090a0">DELOAD — Deadlift + Pull Técnico</div><div class="day-tags"><span class="dtag">Deload · Técnica perfecta</span></div></div><div class="day-right"><span class="time-tag" style="color:var(--muted2)">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>Movilidad cadera + isquios 5 min · DL técnico vacío 3×5</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza Deload — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Deadlift deload</td><td>3 × 5</td><td>60% 1RM · lento y técnico</td></tr><tr><td>Ring Row lento</td><td>3 × 8</td><td>Tempo 3-2-3 · rango completo</td></tr><tr><td>RDL</td><td>3 × 8</td><td>50% · estiramiento isquios</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — CLEAN SLATE</div><div class="wod-name">CLEAN SLATE</div><div class="wod-type-row"><span class="wtype wtype-emom">EMOM × 5 ciclos</span><span class="wcap">20 min · técnica perfecta</span></div><ul class="mov-list"><li><span class="mreps">Min 1</span><span class="mname">5 Power Clean <span class="mnote">(60% · técnica)</span></span></li><li><span class="mreps">Min 2</span><span class="mname">8 Box Step-Up</span></li><li><span class="mreps">Min 3</span><span class="mname">10 Wall Ball <span class="mnote">(6 kg)</span></span></li><li><span class="mreps">Min 4</span><span class="mname">10 Push-Up estricto</span></li></ul><div class="scaling">Movimiento perfecto sin fatiga. Consolida todo lo aprendido este mes.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 12 min</div><ul class="bullets"><li>Movilidad posterior completa: isquios + glúteo + lumbar 12 min</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d27"><div class="day-toggle" onclick="tog('d27')"><div class="day-num-box"><span class="dday">SÁB</span><span class="dnum" style="color:rgba(192,96,224,.5)">D27</span></div><div class="day-info"><div class="day-title" style="color:#9090a0">DELOAD — Sesión de Cierre del Mes</div><div class="day-tags"><span class="dtag">Deload total · Celebración</span></div></div><div class="day-right"><span class="time-tag" style="color:var(--muted2)">60 MIN</span><span class="chevron">▾</span></div></div>
+    <div class="day-body">
+      <div class="sec"><div class="sec-title warm">⬤ Calentamiento — 8 min</div><ul class="bullets"><li>5 min movilidad libre · 3 min jump rope suave · Sin estructura</li></ul></div>
+      <div class="sec"><div class="sec-title strength">⬤ Fuerza Deload — 20 min</div><div class="str-wrap"><table class="str-table"><thead><tr><th>Ejercicio</th><th>Series×Reps</th><th>Indicaciones</th></tr></thead><tbody><tr><td>Hip Thrust deload</td><td>3 × 8</td><td>60% · activación glúteo</td></tr><tr><td>Lunge caminando</td><td>3 × 10/lado</td><td>BW · rango completo</td></tr><tr><td>Push-Up + Ring Row</td><td>2 × 10 c/u</td><td>Superserie suave · cierre</td></tr></tbody></table></div></div>
+      <div class="sec"><div class="sec-title wod">⬤ WOD — MONTH DONE</div><div class="wod-name">MONTH DONE</div><div class="wod-type-row"><span class="wtype wtype-chipper">CHIPPER</span><span class="wcap">Sin cap · sin estrés · celebra</span></div><ul class="mov-list"><li><span class="mreps">30</span><span class="mname">Double Under <span class="mnote">(o 60 singles)</span></span></li><li><span class="mreps">20</span><span class="mname">Wall Ball <span class="mnote">(6 kg)</span></span></li><li><span class="mreps">15</span><span class="mname">Box Step-Up</span></li><li><span class="mreps">10</span><span class="mname">Goblet Squat <span class="mnote">(KB ligera)</span></span></li><li><span class="mreps">10</span><span class="mname">Pull-Up <span class="mnote">(o ring row)</span></span></li><li><span class="mreps">400m</span><span class="mname">Carrera al ritmo que quieras</span></li></ul><div class="scaling">Celebra el fin del mes. Cada rep es un logro. Sin presión.</div></div>
+      <div class="sec"><div class="sec-title cool">⬤ Vuelta a la calma — 12 min</div><ul class="bullets"><li>5 min foam roller · 5 min estiramientos suaves · 2 min mindfulness y respiración</li></ul></div>
+    </div>
+  </div>
+
+  <div class="day-card rest-card" id="d28"><div class="day-toggle" onclick="tog('d28')"><div class="day-num-box"><span class="dday">DOM</span><span class="dnum" style="color:var(--w4)">D28</span></div><div class="day-info"><div class="day-title" style="color:var(--w4)">🏆 FIN DEL MES — Día de Récords</div><div class="day-tags"><span class="dtag" style="color:var(--w4);border-color:rgba(192,96,224,.3)">¡Lo conseguiste!</span></div></div><div class="day-right"><span class="chevron">▾</span></div></div>
+    <div class="day-body"><div class="rest-note">¡4 semanas completadas! Hoy anota todos tus nuevos récords en la tabla de abajo. Compara con el día 1 y prepárate para el siguiente ciclo.</div></div>
+  </div>
+</div>
+
+<!-- CLAVES + RÉCORDS (siempre visibles) -->
+<div class="tips-wrap" id="tips-section">
+  <div class="tips-title">CLAVES DEL PROGRAMA</div>
+  <div class="tip"><strong>Progresión de carga</strong><p>S1: 65–75% · S2: 73–80% · S3: 80–90% · S4: 90–100% y deload. Cada semana tiene un propósito específico.</p></div>
+  <div class="tip"><strong>Orden sagrado</strong><p>Fuerza primero, WOD después. El SNC fresco construye fuerza real. El WOD es el motor cardiovascular.</p></div>
+  <div class="tip"><strong>Fuerza variada</strong><p>Cada semana cubres squat, hinge, press horizontal, press vertical, pull y olímpico. Cuerpo completo, sin monotonía.</p></div>
+  <div class="tip"><strong>WODs cardiovasculares</strong><p>Mantén el movimiento sobre la velocidad. Aprende tu pace. El cardio mejora con consistencia, no con heroicidades.</p></div>
+  <div class="tip"><strong>Deload obligatorio</strong><p>Jue–Sáb de semana 4 son deload. No los saltes porque "son fáciles". Son los más importantes del ciclo: supercompensación.</p></div>
+  <div class="tip"><strong>Registra todo</strong><p>Anota cargas, tiempos y rondas cada sesión. Sin datos no hay progreso visible.</p></div>
+</div>
+
+<div class="records-wrap">
+  <div class="rec-title">📊 TABLA DE RÉCORDS DEL MES</div>
+  <table class="rec-table">
+    <thead><tr><th>Levantamiento</th><th>Inicio</th><th>Final</th><th>Mejora</th></tr></thead>
+    <tbody>
+      <tr><td>Back Squat 1RM</td><td>____ kg</td><td>____ kg</td><td>____ kg</td></tr>
+      <tr><td>Deadlift 1RM</td><td>____ kg</td><td>____ kg</td><td>____ kg</td></tr>
+      <tr><td>Press de Banca 1RM</td><td>____ kg</td><td>____ kg</td><td>____ kg</td></tr>
+      <tr><td>Press Militar 1RM</td><td>____ kg</td><td>____ kg</td><td>____ kg</td></tr>
+      <tr><td>Hip Thrust 1RM</td><td>____ kg</td><td>____ kg</td><td>____ kg</td></tr>
+      <tr><td>Pull-Up (reps máx)</td><td>____ reps</td><td>____ reps</td><td>____ reps</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+function showWeek(n){
+  document.querySelectorAll('.week-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.wnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('week'+n).classList.add('active');
+  document.querySelector('.wnav-btn[data-w="'+n+'"]').classList.add('active');
+  window.scrollTo({top:document.querySelector('.week-nav').offsetTop-2,behavior:'smooth'});
+}
+function tog(id){
+  document.getElementById(id).classList.toggle('open');
+}
+</script>
+</body>
+</html>
